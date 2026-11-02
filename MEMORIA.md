@@ -26,6 +26,7 @@ Landing de MiniMundos con recorrido horizontal de 4 mundos, fondo cósmico canva
 - 2026-11-01: renombradas fuentes con espacio a baloo-2-400-800.woff2 y nunito-400-800.woff2 y actualizada assets/fonts.css.
 - 2026-11-01: copy mejorado en data.js y app.js: tono más cercano, verbos activos, mapa y portada actualizados a 3 mundos.
 - 2026-11-01: Repo GitHub creado y deploy en Vercel minimundosve.vercel.app, commit de cierre.
+- 2026-11-01: Despliegue en curso en Vercel, dominio minimundosve.vercel.app pendiente de asignación. Repo sincronizado.
 
 
 ## Archivo (lo viejo, sin borrar)
