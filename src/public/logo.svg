@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="ED-Dev">
+  <!-- Isologo: arco de caverna + sol partido (antorcha gold / jardín verde) + colinas -->
+  <defs>
+    <linearGradient id="solE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="50%" stop-color="#f7c948"/>
+      <stop offset="50%" stop-color="#3ddc97"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(0,0)">
+    <path d="M7 60 V31 A25 25 0 0 1 57 31 V60" fill="none" stroke="#f7c948" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="32" cy="40" r="10" fill="url(#solE)"/>
+    <path d="M13 60 Q22.5 50 32 57 Q41.5 50 51 60 Z" fill="#3ddc97" opacity=".55"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="76" y="45" font-family="'Space Grotesk Variable','Inter Variable',system-ui,sans-serif" font-size="34" font-weight="700" letter-spacing="-1" fill="#e6f4ea">ED<tspan fill="#3ddc97">-</tspan>Dev</text>
+</svg>

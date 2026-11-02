@@ -1,0 +1,572 @@
+/* ============================================================
+   MiniMundos — estilos
+   Fondo cósmico + paleta intensa por mundo + cartas bento glass.
+   Mobile-first. Nada de framework, nada de dependencias.
+   ============================================================ */
+
+:root{
+  --font-display:'Baloo 2','Nunito',system-ui,sans-serif;
+  --font-text:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+
+  --bg:#050a18;                 /* azul noche profundo */
+  --text:#eaf1ff;
+  --muted:#a8b8d8;
+  --glass:rgba(14,20,42,.66);
+  --glass-2:rgba(20,28,56,.58);
+  --line:rgba(255,255,255,.13);
+  --line-2:rgba(255,255,255,.26);
+  --shadow:0 18px 44px rgba(0,0,0,.46);
+
+  /* Paleta de la portada (cósmico + oro) */
+  --acento:#ffc46b;
+  --acento-2:#ff9a3c;
+  --glow-a:rgba(120,150,255,.22);
+  --glow-b:rgba(255,170,80,.16);
+
+  --radio:22px;
+  --zocalo:max(18px,env(safe-area-inset-bottom));
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  height:100%;
+  margin:0;
+  overflow:hidden;             /* la página no scrola en vertical: es un mapa horizontal */
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-text);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+body{overscroll-behavior:none}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+.salto{
+  position:fixed;top:8px;left:8px;z-index:60;
+  padding:10px 14px;border-radius:12px;
+  background:#0b1330;color:#fff;font:700 14px/1 var(--font-text);
+  transform:translateY(-160%);
+}
+.salto:focus-visible{transform:translateY(0)}
+
+/* ---------- Fondo cósmico ---------- */
+#cosmos{
+  position:fixed;inset:0;z-index:0;
+  width:100%;height:100%;
+  display:block;
+  pointer-events:none;
+}
+
+/* ---------- Cursor linterna (solo desktop) ---------- */
+.farol{
+  position:fixed;top:0;left:0;z-index:4;
+  width:660px;height:660px;margin:-330px 0 0 -330px;
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .5s ease;
+  will-change:transform;
+  mix-blend-mode:plus-lighter;
+  background:radial-gradient(circle,
+    var(--farol-color,rgba(255,240,205,.13)) 0%,
+    rgba(255,240,205,.05) 34%,
+    transparent 64%);
+}
+@media (hover:hover) and (pointer:fine){
+  .farol{opacity:1}
+}
+
+/* ---------- Marca ---------- */
+.marca{
+  position:fixed;top:max(14px,env(safe-area-inset-top));left:20px;z-index:30;
+  display:flex;align-items:center;gap:10px;
+  color:var(--acento);
+}
+.marca__signo{width:26px;height:26px;flex:none;filter:drop-shadow(0 0 10px currentColor)}
+.marca__texto{display:flex;flex-direction:column;line-height:1}
+.marca__texto b{font:800 17px/1 var(--font-display);letter-spacing:.01em;color:var(--text)}
+.marca__texto i{font:600 11px/1.4 var(--font-text);font-style:normal;color:var(--muted);letter-spacing:.06em}
+
+/* ---------- Barra de avance ---------- */
+.barra{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:32;
+  background:rgba(255,255,255,.07);
+}
+.barra__relleno{
+  display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--acento),var(--acento-2));
+  box-shadow:0 0 12px var(--acento);
+  transition:width .12s linear;
+}
+
+/* ---------- Aviso ---------- */
+.aviso{
+  position:fixed;top:0;left:0;right:0;z-index:33;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:10px 46px 10px 16px;
+  background:linear-gradient(90deg,rgba(10,16,38,.96),rgba(16,24,54,.96));
+  border-bottom:1px solid var(--line);
+}
+.aviso p{margin:0;font:600 13px/1.4 var(--font-text);color:var(--text);text-align:center}
+.aviso[hidden]{display:none}   /* el display:flex de arriba pisaba el atributo hidden */
+
+.aviso button{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:28px;height:28px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.1);color:var(--text);
+  font:400 18px/1 var(--font-text);cursor:pointer;
+}
+
+/* ---------- Mapa (puntos) ---------- */
+.mapa{
+  position:fixed;bottom:var(--zocalo);left:0;right:0;z-index:30;
+  display:flex;justify-content:center;pointer-events:none;
+}
+.mapa__lista{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:6px;
+  margin:0;padding:8px 10px;list-style:none;
+  background:rgba(8,13,32,.62);
+  border:1px solid var(--line);
+  border-radius:999px;
+  backdrop-filter:blur(10px);
+}
+.mapa__punto{
+  display:grid;place-items:center;
+  width:34px;height:34px;padding:0;
+  border:0;border-radius:50%;
+  background:transparent;cursor:pointer;
+  transition:transform .2s ease;
+}
+.mapa__punto span{
+  width:9px;height:9px;border-radius:50%;
+  background:rgba(255,255,255,.34);
+  transition:all .25s ease;
+}
+.mapa__punto:hover span{background:rgba(255,255,255,.7)}
+.mapa__punto[aria-current="true"] span{
+  background:var(--acento);
+  box-shadow:0 0 0 4px rgba(255,255,255,.09),0 0 14px var(--acento);
+  transform:scale(1.25);
+}
+.mapa__nombre{
+  position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
+}
+.mapa__punto:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+
+/* ---------- Escenario: scroll horizontal con snap nativo ---------- */
+.escenario{
+  position:relative;z-index:10;
+  height:100dvh;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  display:flex;
+}
+.escenario::-webkit-scrollbar{display:none}
+
+.sala{
+  position:relative;
+  flex:0 0 100%;
+  width:100%;
+  scroll-snap-align:center;
+  display:flex;
+  align-items:center;          /* contenido centrado en vertical */
+  /* Red de seguridad: en pantallas muy chicas o acostadas el contenido puede
+     no caber; con esto siempre se puede llegar a el. */
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  padding:96px 22px calc(var(--zocalo) + 78px);
+  isolation:isolate;
+}
+.lienzo{margin:0 auto;width:100%;max-width:1120px}
+
+/* Ambiente de la sala: dos brillos con la paleta del mundo */
+.sala::before{
+  content:'';
+  position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(88% 62% at 16% 14%,var(--glow-a),transparent 62%),
+    radial-gradient(72% 58% at 86% 88%,var(--glow-b),transparent 60%);
+}
+/* Número fantasma de sala. Va en un envoltorio con recorte propio: si asomara
+   del borde de la sala, crearia desborde vertical y la sala ganaria una barra
+   de scroll fantasma (verificado: 56px de desborde con el pseudo-elemento). */
+.sala__fantasma{
+  display:none;
+}
+
+/* ---------- Contenido ---------- */
+.lienzo{width:100%;max-width:1120px;margin:0 auto}
+
+.kicker{
+  margin:0 0 10px;
+  font:800 12px/1 var(--font-text);
+  letter-spacing:.34em;text-transform:uppercase;
+  color:var(--acento);
+}
+.titulo{
+  margin:0;
+  font:800 clamp(48px,7vw,92px)/.9 var(--font-display);
+  letter-spacing:-.035em;
+  color:#fff;
+  text-shadow:0 8px 40px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.04);
+  text-rendering:optimizeLegibility;
+}
+.bajada{
+  margin:14px 0 0;
+  font:600 clamp(18px,2.2vw,25px)/1.35 var(--font-text);
+  color:var(--acento);
+  max-width:26ch;
+}
+.detalle{
+  margin:16px 0 0;
+  font:400 clamp(15px,1.6vw,18px)/1.6 var(--font-text);
+  color:var(--muted);
+  max-width:50ch;
+}
+.pie{
+  margin:26px 0 0;
+  font:700 12px/1 var(--font-text);
+  letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);
+}
+
+/* Portada */
+.portada{text-align:left}
+.portada .lienzo{max-width:1180px;margin:auto}
+.portada__titulo{
+  font:800 clamp(64px,12vw,168px)/.85 var(--font-display);
+  letter-spacing:-.04em;margin:0;color:#fff;
+  text-shadow:0 12px 60px rgba(0,0,0,.6), 0 2px 0 rgba(255,255,255,.05);
+  text-rendering:optimizeLegibility;
+}
+.portada__lema{
+  margin:6px 0 0;
+  font:600 clamp(17px,2vw,22px)/1.3 var(--font-text);
+  color:var(--acento);letter-spacing:.02em;
+}
+.portada__intro{
+  margin:16px 0 0;max-width:46ch;
+  font:400 clamp(15px,1.6vw,18px)/1.6 var(--font-text);
+  color:var(--muted);
+}
+.mapaTitulo{
+  margin:38px 0 14px;
+  font:800 13px/1 var(--font-text);
+  letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+}
+
+/* Islas del mapa */
+.islas{
+  display:grid;gap:14px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.isla{
+  position:relative;
+  display:flex;flex-direction:column;gap:6px;
+  padding:18px 16px 16px;
+  text-align:left;text-decoration:none;
+  border-radius:var(--radio);
+  border:1px solid var(--line);
+  background:linear-gradient(155deg,var(--glass),var(--glass-2));
+  backdrop-filter:blur(12px);
+  box-shadow:var(--shadow);
+  color:var(--text);
+  cursor:pointer;
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  overflow:hidden;
+}
+.isla::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(120% 90% at 12% 0%,var(--glow-a),transparent 60%);
+  opacity:.9;pointer-events:none;
+}
+.isla:hover,.isla:focus-visible{
+  transform:translateY(-4px);
+  border-color:var(--line-2);
+  box-shadow:0 22px 50px rgba(0,0,0,.5);
+}
+.isla:focus-visible{outline:2px solid var(--acento);outline-offset:3px}
+.isla__num{
+  font:800 12px/1 var(--font-text);letter-spacing:.24em;
+  color:var(--acento);
+}
+.isla__nombre{
+  margin:2px 0 0;
+  font:800 clamp(20px,2.4vw,27px)/1.05 var(--font-display);
+  color:#fff;letter-spacing:-.01em;
+}
+.isla__bajada{
+  margin:0;
+  font:400 13.5px/1.45 var(--font-text);
+  color:var(--muted);
+}
+.isla__estado{
+  align-self:flex-start;
+  margin-top:6px;
+  padding:5px 11px;border-radius:999px;
+  font:800 10.5px/1 var(--font-text);letter-spacing:.14em;text-transform:uppercase;
+  color:#08101f;
+  background:var(--acento);
+}
+.isla__entrar{
+  margin-top:auto;padding-top:12px;
+  font:700 12px/1 var(--font-text);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--acento);
+}
+
+/* ---------- Bento de cartas ---------- */
+.bento{
+  display:grid;gap:16px;
+  margin-top:26px;
+  grid-template-columns:1fr;
+}
+.carta{
+  position:relative;
+  display:flex;flex-direction:column;
+  padding:22px 20px 20px;
+  border-radius:var(--radio);
+  border:1px solid var(--line);
+  background:linear-gradient(158deg,var(--glass),var(--glass-2));
+  backdrop-filter:blur(14px) saturate(1.15);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.carta::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,var(--acento),var(--acento-2));
+}
+.carta::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(90% 70% at 100% 0%,var(--glow-a),transparent 55%);
+  opacity:.55;
+}
+.carta > *{position:relative}
+.carta__cabeza{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:12px;
+}
+.carta__tipo{
+  font:800 11px/1 var(--font-text);letter-spacing:.22em;text-transform:uppercase;
+  color:var(--acento);
+}
+.carta__etiqueta{
+  padding:5px 10px;border-radius:999px;
+  font:800 10px/1 var(--font-text);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text);
+  background:rgba(255,255,255,.09);
+  border:1px solid var(--line);
+}
+.carta__nombre{
+  margin:0;
+  font:800 clamp(23px,2.7vw,32px)/1.06 var(--font-display);
+  color:#fff;letter-spacing:-.012em;
+}
+.carta__texto{
+  margin:9px 0 0;
+  font:400 15px/1.55 var(--font-text);
+  color:var(--muted);
+  max-width:44ch;
+  /* Crece para empujar el botón al fondo: así los botones de cartas vecinas
+     quedan alineados aunque una carta tenga precio y la otra no. */
+  flex:1 0 auto;
+}
+
+/* Precio: siempre legible, nunca escondido por el estilo */
+.precio{
+  margin:16px 0 0;
+  padding:13px 14px;
+  border-radius:14px;
+  background:rgba(4,8,20,.82);
+  border:1px solid var(--line);
+  display:flex;flex-direction:column;gap:3px;
+}
+.precio__rotulo{
+  font:800 10.5px/1 var(--font-text);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);
+}
+.precio__monto{
+  font:800 clamp(22px,2.6vw,30px)/1.1 var(--font-display);
+  color:#fff;letter-spacing:-.01em;
+}
+.precio__nota{
+  margin:0;font:400 12.5px/1.4 var(--font-text);color:var(--muted);
+}
+
+/* Botones */
+.boton{
+  align-self:flex-start;
+  margin-top:18px;
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 20px;
+  border-radius:999px;
+  font:800 14px/1 var(--font-text);
+  text-decoration:none;
+  color:#08101f;
+  background:linear-gradient(135deg,var(--acento),var(--acento-2));
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+.boton:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 16px 34px rgba(0,0,0,.45)}
+.boton:active{transform:translateY(0)}
+.boton:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.boton svg{width:17px;height:17px;flex:none;fill:currentColor}
+.boton--simple{
+  background:rgba(255,255,255,.07);
+  color:var(--text);
+  border:1px solid var(--line);
+  box-shadow:none;
+}
+.boton--simple:hover{background:rgba(255,255,255,.13);filter:none}
+
+/* Carta de aviso (mundo que aún no existe) */
+.carta--aviso{
+  border-style:dashed;
+  background:linear-gradient(158deg,rgba(14,20,42,.4),rgba(10,14,34,.34));
+}
+.carta--aviso::before{opacity:.5}
+
+/* WhatsApp flotante */
+.wafijo{
+  position:fixed;right:16px;bottom:calc(var(--zocalo) + 12px);z-index:40;
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 18px 13px 15px;
+  border-radius:999px;
+  font:800 14px/1 var(--font-text);
+  text-decoration:none;color:#04180d;
+  background:linear-gradient(135deg,#4ff08d,#1fbc5c);
+  box-shadow:0 12px 30px rgba(0,0,0,.42),0 0 0 1px rgba(255,255,255,.14) inset;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.wafijo:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(0,0,0,.5)}
+.wafijo:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.wafijo svg{width:20px;height:20px;flex:none;fill:currentColor}
+
+/* Sin JavaScript */
+.noscript{
+  position:fixed;inset:0;z-index:80;
+  display:grid;place-content:center;gap:10px;padding:30px;
+  background:#050a18;text-align:center;
+}
+.noscript h1{font:800 44px/1 var(--font-display);margin:0}
+.noscript p{color:var(--muted);max-width:44ch;margin:0 auto}
+
+/* ---------- Paletas por mundo ---------- */
+[data-mundo="portada"]{
+  --acento:#ffc46b;--acento-2:#ff9a3c;
+  --glow-a:rgba(120,150,255,.22);--glow-b:rgba(255,170,80,.15);
+}
+[data-mundo="tambores"]{
+  --acento:#ffb347;--acento-2:#ff7a2f;
+  --glow-a:rgba(255,150,50,.30);--glow-b:rgba(255,92,20,.17);
+  --farol-color:rgba(255,214,150,.15);
+}
+[data-mundo="instrumentos"]{
+  --acento:#a78bfa;--acento-2:#7c5cff;
+  --glow-a:rgba(150,120,255,.30);--glow-b:rgba(90,60,220,.17);
+  --farol-color:rgba(214,196,255,.15);
+}
+[data-mundo="plantillas"]{
+  --acento:#3ad6bd;--acento-2:#14a08c;
+  --glow-a:rgba(45,212,191,.27);--glow-b:rgba(20,160,140,.16);
+  --farol-color:rgba(180,255,240,.14);
+}
+[data-mundo="cubos"]{
+  --acento:#6aa8ff;--acento-2:#3576f0;
+  --glow-a:rgba(96,165,250,.29);--glow-b:rgba(50,110,240,.17);
+  --farol-color:rgba(190,215,255,.15);
+}
+
+/* En móvil, mapa a la izquierda y WhatsApp a la derecha: ambos en la misma
+   línea pero sin pisarse, y sin tapar el contenido (verificado: centrados se
+   solapaban ~66px; apilados, los puntos tapaban el precio). */
+@media (max-width:760px){
+  .mapa{justify-content:flex-start;padding-left:14px}
+  .wafijo{bottom:calc(var(--zocalo) + 8px);right:14px;padding:11px 15px 11px 13px;font-size:13.5px}
+  .wafijo svg{width:18px;height:18px}
+  .marca__texto i{display:none}
+  /* Espacio reservado para los controles fijos de abajo: si no, el mapa o el
+     botón verde llegan a tapar una carta o un botón de WhatsApp de la sala
+     (verificado: ocultaban parte de "Consultar por WhatsApp"). */
+  .sala{padding-bottom:calc(var(--zocalo) + 104px)}
+}
+
+/* ---------- Escritorio ---------- */
+@media (min-width:760px){
+  .sala{padding:110px 48px calc(var(--zocalo) + 88px)}
+  .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bento--una{grid-template-columns:minmax(0,640px)}
+  .islas{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .portada__titulo{font-size:clamp(72px,10vw,150px)}
+  .marca{left:34px}
+}
+@media (min-width:1100px){
+  .sala__rejilla{
+    display:grid;
+    grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+    gap:44px;align-items:center;
+  }
+  .bento{margin-top:0}
+}
+
+/* Menos movimiento: sin parallax, sin linterna, sin scroll suave */
+@media (prefers-reduced-motion:reduce){
+  .escenario{scroll-behavior:auto}
+  .farol{display:none}
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+
+/* Teléfonos chicos (320-360px) o acostados: todo más compacto para que el
+   contenido de cada mundo quepa sin tener que hacer scroll dentro de la sala. */
+@media (max-height:700px), (max-width:380px){
+  .sala{padding:66px 14px calc(var(--zocalo) + 58px)}
+  .detalle,.portada__intro,.pie{display:none}
+  .portada__titulo{font-size:clamp(38px,12vw,62px)}
+  .portada__lema{font-size:clamp(15px,3.6vw,19px)}
+  .titulo{font-size:clamp(30px,8vw,46px)}
+  .bajada{font-size:clamp(15px,3.6vw,19px);margin-top:10px}
+  .mapaTitulo{margin:20px 0 10px}
+  .islas{gap:10px}
+  .isla{padding:13px 12px 12px;border-radius:16px}
+  .isla__bajada{display:none}
+  .isla__nombre{font-size:clamp(17px,4.4vw,22px)}
+  .isla__estado{padding:4px 8px;font-size:9px}
+  .isla__entrar{padding-top:8px;font-size:10.5px}
+  .bento{gap:12px;margin-top:18px}
+  .carta{padding:16px 14px 15px;border-radius:18px}
+  .carta__cabeza{margin-bottom:8px}
+  .carta__nombre{font-size:clamp(19px,5vw,24px)}
+  .carta__texto{font-size:13.5px;margin-top:7px}
+  .precio{margin-top:12px;padding:10px 12px}
+  .precio__monto{font-size:clamp(18px,5vw,23px)}
+  .precio__nota{display:none}
+  .boton{margin-top:12px;padding:11px 15px;font-size:13px}
+}
+
+/* Teléfono acostado: sobra ancho y falta alto, asi que las cartas van
+   en dos columnas en vez de apilarse. */
+@media (max-height:520px) and (min-width:620px){
+  .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* El texto al lado de las cartas: si no, se apila y la sala no cabe. */
+  .sala__rejilla{
+    display:grid;
+    grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+    gap:26px;
+    align-items:center;
+  }
+  .sala{padding:50px 26px calc(var(--zocalo) + 46px)}
+  .titulo{font-size:clamp(26px,4.4vw,40px)}
+  .bajada{font-size:clamp(15px,2.6vw,19px)}
+}

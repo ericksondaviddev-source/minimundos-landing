@@ -1,0 +1,146 @@
+/* ── ESTÁNDAR ED-DEV · tokens + base ─────────────────────────────
+   Copiado del Portafolio ED-Dev (verificado 60 FPS, 2026-10-28).
+   Fondo siempre oscuro base; los ambientes claro/oscuro se fijan
+   POR SALA con [data-ambiente], nunca con prefers-color-scheme
+   (el canvas no reacciona al esquema del sistema). */
+
+:root {
+  --font-display: "Space Grotesk Variable", "Inter Variable", system-ui, sans-serif;
+  --font-text: "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --bg: #050a08;
+  --bg2: #0a1510;
+  --glass: rgba(255, 255, 255, .08);
+  --glass-strong: rgba(255, 255, 255, .14);
+  --text: #e6f4ea;
+  --muted: #9fb9a8;
+  --line: rgba(255, 255, 255, .14);
+  --line-strong: rgba(255, 255, 255, .32);
+  --accent1: #3ddc97;
+  --accent2: #f7c948;
+  --turq: #0b2e2a;
+  --deep: #0a1f18;
+  --gold: #c9a45a;
+  --tag-bg: rgba(247, 201, 72, .16);
+  --tag-fg: #ffe5a3;
+  --tag2-bg: rgba(61, 220, 151, .14);
+  --tag2-fg: #9df3cb;
+  --btn-fg: #05210f;
+  --radius: 20px;
+  --shadow: 0 18px 50px rgba(0, 0, 0, .35);
+}
+
+* { box-sizing: border-box }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font-text);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none }
+
+:focus-visible {
+  outline: 3px solid var(--accent2);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.sr-only, .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 50;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--accent1);
+  color: var(--btn-fg);
+  font-weight: 700;
+  transition: top .2s ease;
+}
+.skip-link:focus { top: 12px }
+
+/* ── Componentes de la casa ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent1), #2bbf7f);
+  color: var(--btn-fg);
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .15s ease, filter .15s ease;
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.05) }
+.btn.secondary { background: transparent; border-color: var(--line-strong); color: var(--text); font-weight: 600 }
+.btn.disabled { opacity: .55; cursor: not-allowed; border-color: var(--line) }
+.btn.wa-big { padding: 14px 22px; font-size: 16px }
+
+.tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  align-self: flex-start;
+}
+.tag.soon { background: var(--tag2-bg); color: var(--tag2-fg) }
+
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+.en-construccion { border-style: dashed; border-color: var(--line-strong) }
+.en-construccion strong { display: block; font-size: 18px; margin-bottom: 8px }
+.en-construccion p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5 }
+
+.muted { color: var(--muted); font-size: 12px }
+
+.copy-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0b1f14;
+  color: #e6f4ea;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(61, 220, 151, .5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+  z-index: 40;
+}
+.copy-toast.show { opacity: 1 }
+
+@media (prefers-reduced-motion: reduce) {
+  .project { transition: none }
+  .btn { transition: none }
+  .skip-link { transition: none }
+}

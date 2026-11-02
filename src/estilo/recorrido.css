@@ -1,0 +1,214 @@
+/* ── ESTÁNDAR ED-DEV · recorrido horizontal + HUD ────────────────
+   La máquina JS que vive detrás (inercia lerp .16, snap al asentarse,
+   parallax matemático, #/sala) está en recorrido.js de este kit.
+   Verificado: 60 FPS escritorio/móvil/reducido. */
+
+#caverna {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  display: block;
+}
+
+.stage {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+/* En escritorio el snap lo maneja la inercia: el snap CSS de Chrome
+   revierte los scrolls programáticos y pelea con el lerp. */
+@media (hover: hover) and (pointer: fine) {
+  .stage { scroll-snap-type: none; }
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  width: max-content;
+}
+
+.room {
+  flex: none;
+  width: 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+  padding: 80px 6vw 60px;
+  box-sizing: border-box;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Ambientes por sala: contraste garantizado sobre el canvas */
+.room[data-ambiente="cueva"] {
+  color: var(--text);
+  --text: #e6f4ea;
+  --muted: #daeadd;
+  --glass: rgba(255, 255, 255, .08);
+  --glass-strong: rgba(255, 255, 255, .14);
+  --line: rgba(255, 255, 255, .14);
+  --line-strong: rgba(255, 255, 255, .32);
+  --tag-bg: rgba(247, 201, 72, .22);
+  --tag-fg: #ffe9b0;
+  --tag2-bg: rgba(61, 220, 151, .2);
+  --tag2-fg: #b8f7d6;
+}
+.room[data-ambiente="jardin"] {
+  color: var(--text);
+  --text: #16211b;
+  --muted: #4d5a52;
+  --glass: rgba(255, 255, 255, .72);
+  --glass-strong: rgba(255, 255, 255, .92);
+  --line: rgba(22, 33, 27, .16);
+  --line-strong: rgba(22, 33, 27, .4);
+}
+
+/* Titulares: capas de compositor (el parallax anima por GPU) */
+.room-head { will-change: transform, opacity }
+.room-head h1 {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 9vw, 128px);
+  font-weight: 760;
+  line-height: .95;
+  letter-spacing: -.03em;
+  margin: 6px 0 16px;
+}
+.room-index {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 2px;
+}
+.room-index .brand-sign { flex: none }
+.room-sub { color: var(--muted); font-size: clamp(18px, 2vw, 22px); max-width: 58ch; line-height: 1.55 }
+.home-actions { display: flex; gap: 12px; margin-top: 12px }
+
+/* Mapa inferior (el número de sala vive SOLO aquí) */
+.map {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+  background: var(--glass-strong);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  backdrop-filter: blur(12px);
+}
+.map-item {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.map-item.active { color: var(--text); background: var(--glass) }
+.map-index { margin-right: 8px; opacity: .55 }
+
+/* HUD fijo */
+.lang-btn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 10;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+}
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 20;
+  background: rgba(128, 128, 128, .12);
+  pointer-events: none;
+}
+.progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--accent1)) }
+.contacto-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 10;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--glass-strong);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.contacto-btn.oculto { opacity: 0; transform: translateY(8px); pointer-events: none }
+
+/* Tarjetas de proyecto */
+.projects {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+.project {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .6s ease, transform .6s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.project.in { opacity: 1; transform: translateY(0) }
+.project:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--line-strong) }
+.project.featured { background: linear-gradient(135deg, rgba(201, 164, 90, .18), rgba(61, 220, 151, .12)) }
+.project-media { overflow: hidden; border-bottom: 1px solid var(--line) }
+.project-media img { display: block; width: 100%; height: 180px; object-fit: cover }
+.project-body { padding: 28px; display: flex; flex-direction: column; gap: 14px; height: 100% }
+.project-body h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 27px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  margin: -4px 0 2px;
+}
+.project-desc { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.6; flex: 1 }
+.project-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px }
+
+/* Destacados en Home */
+.home-featured { margin-top: 34px; max-width: 100% }
+.featured-title {
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.2vw, 24px);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin: 0 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid var(--gold);
+}
+.proyectos-casa { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) }
+.proyectos-casa .project-body { padding: 20px 22px; gap: 10px }
+.proyectos-casa .project-body h2 { font-size: 20px }
