@@ -25,6 +25,7 @@ Landing de MiniMundos con recorrido horizontal de 4 mundos, fondo cósmico canva
 - 2026-11-01: paleta data.js cambiada de ambar/violeta/teal/azul a tambores/instrumentos/plantillas/cubos para alinear CSS y fondo.
 - 2026-11-01: renombradas fuentes con espacio a baloo-2-400-800.woff2 y nunito-400-800.woff2 y actualizada assets/fonts.css.
 - 2026-11-01: copy mejorado en data.js y app.js: tono más cercano, verbos activos, mapa y portada actualizados a 3 mundos.
+- 2026-11-01: Repo GitHub creado y deploy en Vercel minimundosve.vercel.app, commit de cierre.
 
 
 ## Archivo (lo viejo, sin borrar)
